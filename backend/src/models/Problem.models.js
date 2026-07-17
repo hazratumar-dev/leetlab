@@ -75,3 +75,5 @@ const problemSchema = new Schema({
 }, {
     timestamps: true
 })
+
+const Problem = mongoose.model("Problem", problemSchema)
