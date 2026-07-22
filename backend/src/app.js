@@ -2,8 +2,10 @@ import express from 'express';
 import cookieParser from "cookie-parser"
 import cors from "cors"
 
-// all custom import
+// custom import
 import userRoutes from "./routes/user.routes.js"
+import problemRoutes from "./routes/problem.routes.js"
+
 
 const app = express();
 
@@ -15,11 +17,13 @@ app.use(
         allowedHeaders: ["Content-Type", "Authorization"]
     })
 )
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true}))
 app.use(cookieParser())
 
 
 app.use("/api/v1/user", userRoutes)
+app.use("/api/v1/problems", problemRoutes)
 
 export { app };

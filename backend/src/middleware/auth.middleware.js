@@ -17,10 +17,8 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
   if (!token) {
     throw new ApiError(401, "Unauthorized request");
   }
-  console.log(token)
   try {
     const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-    console.log(decodedToken)
     const user = await User.findById(decodedToken?._id).select(
       "-password -refreshToken -emailVerificationToken -emailVerificationExpiry"
     );
@@ -33,3 +31,16 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
     throw new ApiError(401, error?.message || "Invalid access token");
   }
 });
+
+export const verifyPermission = (roles= []) => 
+    asyncHandler(async(req, res, next) => {
+      if(!req.user._id){
+        throw new ApiError(401, "Unauthorized request")
+      } 
+
+      if(roles.includes(req.user?.role)){
+        next()
+      } else{
+        throw new ApiError(403, "You are not allowed to perform this action")
+      }
+    })

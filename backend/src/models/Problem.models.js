@@ -4,10 +4,12 @@ import {AvailableDifficultylevel, AvailableCodeLanguage} from "../utils/constant
 const problemSchema = new Schema({
     title: {
         type: String,
-        required: true
+        required: true,
+        trim: true,
     },
     description: {
-        type: String
+        type: String,
+        trim: true
     },
     difficulty: {
         type: String,
@@ -25,9 +27,17 @@ const problemSchema = new Schema({
     },
     examples: [
         {
-            input: {type: String, required: true},
-            output: {type: String, required: true},
-            explanation: {type: String}
+            input: {
+                type: String,
+                required: true
+            },
+            output: {
+                type: String, 
+                required: true
+            },
+            explanation: {
+                type: String
+            }
         }  
     ],
     constraints: {
@@ -42,16 +52,22 @@ const problemSchema = new Schema({
     },
     testCases: [
         {
-            input: {type: String, required: true},
-            output: {type: String, required: true}
+            input: {
+                type: String, 
+                required: true
+            },
+            output: {
+                type: String, 
+                required: true
+            }
         }
     ],
     codeSnippets: [
         {
             language: {
                 type: String,
+                enum: AvailableCodeLanguage,
                 required: true,
-                enum: AvailableCodeLanguage
             },
             code: {
                 type: String,
@@ -76,4 +92,4 @@ const problemSchema = new Schema({
     timestamps: true
 })
 
-const Problem = mongoose.model("Problem", problemSchema)
+export const Problem = mongoose.model("Problem", problemSchema)

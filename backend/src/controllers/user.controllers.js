@@ -51,7 +51,7 @@ const registerUser = asyncHandler( async(req, res) => {
         email,
         password,
         isEmailVerified: false,
-        role: UserRoleEnum.USER
+        role: UserRoleEnum.ADMIN
     }) 
 
     const { unHashedToken, hashedToken, tokenExpiry} = user.generateRandomToken()
