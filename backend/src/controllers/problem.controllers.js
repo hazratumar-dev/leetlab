@@ -138,7 +138,7 @@ const updateProblemById = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Inalid problem")
     }
 
-    if(req.user._id !== UserRoleEnum.ADMIN){
+    if(req.user.role !== UserRoleEnum.ADMIN){
         throw new ApiError(400, "You are not allowed to update problem")
     }
 
@@ -210,7 +210,23 @@ const updateProblemById = asyncHandler(async (req, res) => {
 });
 
 const deleteProblemById = asyncHandler(async (req, res) => {
+    const {problemId} = req.params
 
+    const deletedProblem = await Problem.findByIdAndDelete(problemId)
+
+    if(!deletedProblem){
+        throw new ApiError(404, "problem not found")
+    }
+
+    return res
+        .status(200)
+        .json(
+            new ApiRsponse(
+                200,
+                {},
+                "problem deleted successfully"
+            )
+        )
 });
 
 const getSolvedProblem = asyncHandler(async (req, res) => {
