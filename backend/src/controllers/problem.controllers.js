@@ -1,13 +1,47 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiRsponse } from "../utils/apiResponse.js";
-import { User } from "../models/User.models.js";
+import { User } from "../models/user.models.js";
 import { Problem } from "../models/Problem.models.js";
 import { getJudge0LanguageId, submitBatch, pollBatchResults } from "../services/judge0.services.js";
 import { UserRoleEnum } from "../utils/constant.js";
 
 const getProblems = asyncHandler(async (req, res) => {
-    const problems = await Problem.find({})
+    const problems = await Problem.aggregate([
+        {
+            $lookup: {
+                from: "problemSolved",
+                let: { problemId: "$_id"},
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {$eq: ["$problemId", "$$problemId"]},
+                                    {$eq: ["$userId", req.user._id]}
+                                ]
+                            }
+                        }
+                    }
+                ],
+                as: "solvedBy"
+            }
+        }
+    ])
+
+    if(!problems || problems.length == 0){
+        throw new ApiError(404, "problems not found")
+    }
+
+    return res
+        .status(200)
+        .json(
+            new ApiRsponse(
+                200,
+                {problems},
+                "problems fetched successfully"
+            )
+        )
 });
 
 const getProblemById = asyncHandler(async (req, res) => {
