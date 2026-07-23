@@ -45,7 +45,23 @@ const getProblems = asyncHandler(async (req, res) => {
 });
 
 const getProblemById = asyncHandler(async (req, res) => {
+    const {problemId} = req.params
+    console.log(problemId)
 
+    const problem = await Problem.findById(problemId)
+    if(!problem){
+        throw new ApiError(404, "project not found")
+    }
+
+    return res
+        .status(200)
+        .json(
+            new ApiRsponse(
+                200,
+                problem,
+                "problem fetched successfully"
+            )
+        )
 });
 
 const createProblem = asyncHandler(async (req, res) => {

@@ -3,7 +3,8 @@ import {verifyJWT, verifyPermission} from "../middleware/auth.middleware.js"
 import {UserRoleEnum} from "../utils/constant.js";
 import {
     createProblem,
-    getProblems
+    getProblems,
+    getProblemById
 } from "../controllers/problem.controllers.js"
 
 const router = express.Router();
@@ -16,8 +17,11 @@ router
         verifyPermission(UserRoleEnum.ADMIN),
         createProblem
     )
-
 router
     .route("/get-problems")
     .get(getProblems)
+router
+    .route("/:problemId")
+    .get(getProblemById)
+
 export default router
