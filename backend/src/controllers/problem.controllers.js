@@ -131,7 +131,82 @@ const createProblem = asyncHandler(async (req, res) => {
 });
 
 const updateProblemById = asyncHandler(async (req, res) => {
+    const {problemId} = req.params
+    const { title, description, difficulty, tags, examples, constraints, testCases, codeSnippets, refrenceSolution } = req.body;
+    
+    if(!problemId){
+        throw new ApiError(400, "Inalid problem")
+    }
 
+    if(req.user._id !== UserRoleEnum.ADMIN){
+        throw new ApiError(400, "You are not allowed to update problem")
+    }
+
+    if (refrenceSolution && testCases) {
+        for (const item of refrenceSolution) {
+            const language = item.language;
+            const solution = item.solution;
+            const languageId = getJudge0LanguageId(language);
+
+            if (!languageId) {
+                throw new ApiError(400, `Language ${language} is not supported`);
+            }
+
+            const submissions = testCases.map(({ input, output }) => ({
+                source_code: solution,
+                language_id: languageId,
+                stdin: input,
+                expected_output: output
+            }));
+
+            const submissionResult = await submitBatch(submissions);
+            const tokens = submissionResult.map((res) => res.token);
+
+            const results = await pollBatchResults(tokens);
+
+            for (let i = 0; i < results.length; i++) {
+                const result = results[i];
+                if (result.status.id !== 3) {
+                    throw new ApiError(400, `Testcase ${i + 1} failed for language ${language}`);
+                }
+            }
+        }
+    }
+
+    const updatedProblem = await Problem.findByIdAndUpdate(
+        problemId,
+        {
+            $set: {
+                ...(title && { title }),
+                ...(description && { description }),
+                ...(difficulty && { difficulty }),
+                ...(tags && { tags }),
+                ...(examples && { examples }),
+                ...(constraints && { constraints }),
+                ...(testCases && { testCases }),
+                ...(codeSnippets && { codeSnippets }),
+                ...(refrenceSolution && { refrenceSolution }),
+            }
+        },
+        {
+            new: true,
+            runValidator: true
+        }
+    )
+
+    if(!updatedProblem){
+        throw new ApiError(404, "problem not found")
+    }
+
+    return res
+        .status(200)
+        .json(
+            new ApiRsponse(
+                200,
+                {updatedProblem},
+                "problem updated successfully"
+            )
+        )
 });
 
 const deleteProblemById = asyncHandler(async (req, res) => {
