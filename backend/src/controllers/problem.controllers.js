@@ -130,7 +130,7 @@ const createProblem = asyncHandler(async (req, res) => {
         );
 });
 
-const updateProblemById = asyncHandler(async (req, res) => {
+const updateProblem = asyncHandler(async (req, res) => {
     const {problemId} = req.params
     const { title, description, difficulty, tags, examples, constraints, testCases, codeSnippets, refrenceSolution } = req.body;
     
@@ -238,6 +238,6 @@ export {
     getProblemById,
     getSolvedProblem,
     getProblems,
-    updateProblemById,
+    updateProblem,
     deleteProblemById
 };

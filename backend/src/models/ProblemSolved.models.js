@@ -15,6 +15,7 @@ const problemSolvedSchema = new Schema({
     timestamps: true
 })
 
+// ek problem user ek he bar solved kar pye
 problemSolvedSchema.index({ userId: 1, problemId: 1}, {unique: true});
 
 export const problemSolved = mongoose.model("problemSolved", problemSolvedSchema)

@@ -5,7 +5,7 @@ import {
     createProblem,
     getProblems,
     getProblemById,
-    updateProblemById,
+    updateProblem,
     deleteProblemById
 } from "../controllers/problem.controllers.js"
 
@@ -27,8 +27,14 @@ router
     .get(getProblemById)
 router
     .route("/update-problem/:problemId")
-    .patch(updateProblemById)
+    .patch(
+        verifyPermission(UserRoleEnum.ADMIN),
+        updateProblem
+    )
 router
     .route("/delete-problem/:problemId")
-    .delete(deleteProblemById)
+    .delete(
+        verifyPermission(UserRoleEnum.ADMIN),
+        deleteProblemById
+    )
 export default router

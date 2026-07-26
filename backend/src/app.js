@@ -5,8 +5,9 @@ import cors from "cors"
 // custom import
 import userRoutes from "./routes/user.routes.js"
 import problemRoutes from "./routes/problem.routes.js"
-
-
+import executeCodeRouter from "./routes/executeCode.routes.js"
+import submissionRouter from "./routes/submission.routes.js"
+ 
 const app = express();
 
 app.use(
@@ -25,5 +26,7 @@ app.use(cookieParser())
 
 app.use("/api/v1/user", userRoutes)
 app.use("/api/v1/problems", problemRoutes)
+app.use("/api/v1/execute-code", executeCodeRouter)
+app.use("/api/v1/submission", submissionRouter)
 
 export { app };

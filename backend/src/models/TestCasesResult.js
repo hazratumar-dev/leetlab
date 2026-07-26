@@ -52,4 +52,4 @@ const testCasesResult = new Schema({
 
 testCasesResult.index({ submissionId: 1 })
 
-export const testCasesResult = mongoose.model("TestCasesResult", testCasesResult)
+export const TestCasesResult = mongoose.model("TestCasesResult", testCasesResult)

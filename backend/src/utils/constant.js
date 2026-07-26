@@ -20,3 +20,13 @@ export const codeLanguage = {
 }
 
 export const AvailableCodeLanguage = Object.values(codeLanguage)
+
+export const getLanguageName = (languageId) => {
+    const LANGUAGE_NAME = {
+        63: "JavaScript",
+        71: "Python",
+        62: "Java"
+    }
+
+    return LANGUAGE_NAME[languageId] || "Unknown"
+}

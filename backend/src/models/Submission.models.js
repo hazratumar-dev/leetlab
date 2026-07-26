@@ -45,7 +45,13 @@ const submissionSchema = new Schema({
     time: {
         type: String,
         default: null
-    }
+    },
+    testCases: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'TestCasesResult',
+      },
+    ],
 }, {
     timestamps: true
 })
