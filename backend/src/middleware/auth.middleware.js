@@ -1,13 +1,12 @@
-import {asyncHandler} from "../utils/asyncHandler.js"
-import {ApiError} from "../utils/apiError.js"
-import jwt from "jsonwebtoken"
-import { User } from "../models/user.models.js"
-import dotenv from "dotenv"
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { ApiError } from "../utils/apiError.js";
+import jwt from "jsonwebtoken";
+import { User } from "../models/user.models.js";
+import dotenv from "dotenv";
 
 dotenv.config({
-  path: "./.env"
-})
-
+  path: "./.env",
+});
 
 export const verifyJWT = asyncHandler(async (req, res, next) => {
   const token =
@@ -32,15 +31,15 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
   }
 });
 
-export const verifyPermission = (roles= []) => 
-    asyncHandler(async(req, res, next) => {
-      if(!req.user._id){
-        throw new ApiError(401, "Unauthorized request")
-      } 
+export const verifyPermission = (roles = []) =>
+  asyncHandler(async (req, res, next) => {
+    if (!req.user._id) {
+      throw new ApiError(401, "Unauthorized request");
+    }
 
-      if(roles.includes(req.user?.role)){
-        next()
-      } else{
-        throw new ApiError(403, "You are not allowed to perform this action")
-      }
-    })
+    if (roles.includes(req.user?.role)) {
+      next();
+    } else {
+      throw new ApiError(403, "You are not allowed to perform this action");
+    }
+  });

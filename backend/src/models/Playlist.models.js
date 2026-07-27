@@ -1,22 +1,31 @@
-import mongoose, {Schema} from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
-const playlistSchema = new Schema({
+const playlistSchema = new Schema(
+  {
     name: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     description: {
-        type: String
+      type: String,
     },
     userId: {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-        required: true
-    }
-}, {
-    timestamps: true
-})
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    problems: [
+            {
+            type: Schema.Types.ObjectId,
+                ref: "ProblemPlaylist"
+            }
+    ]
+  },
+  {
+    timestamps: true,
+  }
+);
 
-playlistSchema.index({ name: 1, userId: 1}, {unique: true})
+playlistSchema.index({ name: 1, userId: 1 }, { unique: true });
 
 export const Playlist = mongoose.model("Playlist", playlistSchema);
