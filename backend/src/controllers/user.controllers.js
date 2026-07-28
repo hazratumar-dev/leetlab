@@ -1,5 +1,5 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { ApiRsponse } from "../utils/apiResponse.js";
+import { ApiResponse } from "../utils/apiResponse.js";
 import { ApiError } from "../utils/apiError.js";
 import { User } from "../models/user.models.js";
 import { UserRoleEnum } from "../utils/constant.js";
@@ -70,7 +70,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   return res
     .status(201)
-    .json(new ApiRsponse(201, { createdUser }, "user register successfully"));
+    .json(new ApiResponse(201, { createdUser }, "user register successfully"));
 });
 
 const loginUser = asyncHandler(async (req, res) => {
@@ -106,7 +106,7 @@ const loginUser = asyncHandler(async (req, res) => {
     .status(200)
     .cookie("accessToken", accessToken, option)
     .cookie("refreshToken", refreshToken, option)
-    .json(new ApiRsponse(200, loggedInUser, "user logged in successfully"));
+    .json(new ApiResponse(200, loggedInUser, "user logged in successfully"));
 });
 
 const logOutUser = asyncHandler(async (req, res) => {
@@ -131,13 +131,13 @@ const logOutUser = asyncHandler(async (req, res) => {
     .status(204)
     .clearCookie("accessToken", options)
     .clearCookie("refreshToken", options)
-    .json(new ApiRsponse(204, {}, "user logout successfully"));
+    .json(new ApiResponse(204, {}, "user logout successfully"));
 });
 
 const getMe = asyncHandler(async (req, res) => {
   return res
     .status(200)
-    .json(new ApiRsponse(200, req.user, "Current user fetched successfully"));
+    .json(new ApiResponse(200, req.user, "Current user fetched successfully"));
 });
 
 export { registerUser, loginUser, logOutUser, getMe };

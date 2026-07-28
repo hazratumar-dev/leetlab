@@ -21,7 +21,7 @@ const createPlaylist = asyncHandler(async (req, res) => {
 
     return res
         .status(201)
-        .json(new ApiResponse(201, { playlist }, "successfully create playlist"));
+        .json(new ApiResponse(201, { playlist }, "successfully created playlist"));
 });
 
 const getAllPlaylistDetails = asyncHandler(async (req, res) => {

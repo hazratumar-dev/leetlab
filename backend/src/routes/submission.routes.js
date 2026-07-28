@@ -16,11 +16,11 @@ router
     .get(getAllSubmission)
 
 router
-    .route("submission/:problemId")
+    .route("/submissions/:problemId")
     .get(getSubmissionsForProblem)
 
 router
-    .route("get-all-submission/:problemId")
+    .route("/get-all-submission/:problemId")
     .get(getAllTheSubmissionsForProblem)
 
 export default router;

@@ -7,6 +7,7 @@ import {
   getProblemById,
   updateProblem,
   deleteProblemById,
+  getSolvedProblem
 } from "../controllers/problem.controllers.js";
 
 const router = express.Router();
@@ -24,4 +25,8 @@ router
 router
   .route("/delete-problem/:problemId")
   .delete(verifyPermission(UserRoleEnum.ADMIN), deleteProblemById);
+router
+    .route("/solved-problem")
+    .get(getSolvedProblem)
+
 export default router;

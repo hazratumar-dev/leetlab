@@ -94,8 +94,9 @@ const problemSchema = new Schema(
     ],
   },
   {
-    timestamps: true,
+      timestamps: true
   }
 );
+
 
 export const Problem = mongoose.model("Problem", problemSchema);

@@ -1,6 +1,6 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
-import { ApiRsponse } from "../utils/apiResponse.js";
+import { ApiResponse } from "../utils/apiResponse.js";
 import { Submission } from "../models/Submission.models.js";
 
 const getAllSubmission = asyncHandler(async (req, res) => {
@@ -14,10 +14,8 @@ const getAllSubmission = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiRsponse(200, { submissions }, "fetched all submission"));
+    .json(new ApiResponse(200, { submissions }, "fetched all submission"));
 });
-
-// problemId
 
 const getSubmissionsForProblem = asyncHandler(async (req, res) => {
   const userId = req.user._id;
@@ -35,14 +33,14 @@ const getSubmissionsForProblem = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(
-      new ApiRsponse(200, { submission }, "fetched submission of the problem")
+      new ApiResponse(200, { submission }, "fetched submission of the problem")
     );
 });
 
 const getAllTheSubmissionsForProblem = asyncHandler(async (req, res) => {
   const { problemId } = req.params;
 
-  const submission = await Submission.countDocuments({ problemId });
+  const submission = await Submission.countDocuments( problemId );
 
   if (!submission) {
     throw new ApiError(404, "submission not found");
@@ -51,7 +49,7 @@ const getAllTheSubmissionsForProblem = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(
-      new ApiRsponse(
+      new ApiResponse(
         200,
         { count: submission },
         "fetched all submission of the problem"

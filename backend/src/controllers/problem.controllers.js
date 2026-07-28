@@ -1,6 +1,6 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
-import { ApiRsponse } from "../utils/apiResponse.js";
+import { ApiResponse } from "../utils/apiResponse.js";
 import { User } from "../models/user.models.js";
 import { Problem } from "../models/Problem.models.js";
 import {
@@ -39,7 +39,7 @@ const getProblems = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiRsponse(200, { problems }, "problems fetched successfully"));
+    .json(new ApiResponse(200, { problems }, "problems fetched successfully"));
 });
 
 const getProblemById = asyncHandler(async (req, res) => {
@@ -53,7 +53,7 @@ const getProblemById = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiRsponse(200, problem, "problem fetched successfully"));
+    .json(new ApiResponse(200, problem, "problem fetched successfully"));
 });
 
 const createProblem = asyncHandler(async (req, res) => {
@@ -126,7 +126,7 @@ const createProblem = asyncHandler(async (req, res) => {
 
   return res
     .status(201)
-    .json(new ApiRsponse(201, newProblem, "problem create successfully"));
+    .json(new ApiResponse(201, newProblem, "problem create successfully"));
 });
 
 const updateProblem = asyncHandler(async (req, res) => {
@@ -213,7 +213,7 @@ const updateProblem = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(
-      new ApiRsponse(200, { updatedProblem }, "problem updated successfully")
+      new ApiResponse(200, { updatedProblem }, "problem updated successfully")
     );
 });
 
@@ -228,10 +228,49 @@ const deleteProblemById = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiRsponse(200, {}, "problem deleted successfully"));
+    .json(new ApiResponse(200, {}, "problem deleted successfully"));
 });
 
-const getSolvedProblem = asyncHandler(async (req, res) => {});
+const getSolvedProblem = asyncHandler(async (req, res) => {
+    const problems = await Problem.aggregate([
+        {
+            $lookup: {
+                from: "problemSolved",
+                localField: "_id",
+                foreignField: "problemId",
+                as: "solvedBy"
+            },
+        },
+        {
+            $match: {
+                "solvedBy.userId": req.user._id
+            }
+        },
+        {
+            $addFields: {
+                solvedBy: {
+                    $filter: {
+                        input: "$solvedBy",
+                        as: "solve",
+                        cond: { $eq: ["$$solved.userId", req.user._id] }
+                    },
+                },
+            },
+        },
+    ])
+
+    console.log("Problems: ", problems)
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                { problems },
+                "fetched solved problem successfully"
+            )
+        )
+});
 
 export {
   createProblem,

@@ -20,16 +20,16 @@ router
     .route("/all-playlist-details")
     .get(getAllPlaylistDetails)
 router
-    .route("playlist-details")
+    .route("/playlist-details/:playlistId")
     .get(getPlaylistDetails)
 router
-    .route("delete-playlist")
+    .route("/delete-playlist/:playlistId")
     .delete(deletePlayList)
 router
-    .route("add-problem-to-playlist")
+    .route("/add-problem-to-playlist/:playlistId")
     .post(addProblemToPlaylist)
 router
-    .route("remove-problem-playlist")
-put(removeProblemFromPlaylist)
+    .route("/remove-problem-playlist/:playlistId")
+    .put(removeProblemFromPlaylist)
 
 export default router

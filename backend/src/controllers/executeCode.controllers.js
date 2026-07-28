@@ -1,5 +1,5 @@
 import { ApiError } from "../utils/apiError.js";
-import { ApiRsponse } from "../utils/apiResponse.js";
+import { ApiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { submitBatch, pollBatchResults } from "../services/judge0.services.js";
 import { Submission } from "../models/Submission.models.js";
@@ -114,12 +114,12 @@ const executeCode = asyncHandler(async (req, res) => {
     time: result.time,
   }));
 
-  await TestCasesResult.insertMany(testCaseResult);
+  const submissionWithTestCases = await TestCasesResult.insertMany(testCaseResult);
 
   return res
     .status(200)
     .json(
-      new ApiRsponse(
+      new ApiResponse(
         200,
         { submissionWithTestCases },
         "code execution successfully"
