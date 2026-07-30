@@ -30,6 +30,6 @@ router
     .post(addProblemToPlaylist)
 router
     .route("/remove-problem-playlist/:playlistId")
-    .put(removeProblemFromPlaylist)
+    .delete(removeProblemFromPlaylist)
 
 export default router

@@ -12,6 +12,7 @@ const getAllSubmission = asyncHandler(async (req, res) => {
     throw new ApiError(404, "submission not found");
   }
 
+
   return res
     .status(200)
     .json(new ApiResponse(200, { submissions }, "fetched all submission"));
@@ -56,6 +57,7 @@ const getAllTheSubmissionsForProblem = asyncHandler(async (req, res) => {
       )
     );
 });
+
 
 export {
   getAllSubmission,

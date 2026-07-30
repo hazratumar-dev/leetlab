@@ -11,6 +11,7 @@ import {
 import { UserRoleEnum } from "../utils/constant.js";
 
 const getProblems = asyncHandler(async (req, res) => {
+
   const problems = await Problem.aggregate([
     {
       $lookup: {
@@ -50,6 +51,7 @@ const getProblemById = asyncHandler(async (req, res) => {
   if (!problem) {
     throw new ApiError(404, "project not found");
   }
+
 
   return res
     .status(200)
@@ -98,7 +100,6 @@ const createProblem = asyncHandler(async (req, res) => {
     const results = await pollBatchResults(tokens);
 
     for (let i = 0; i < results.length; i++) {
-      console.log("result", results);
       const result = results[i];
 
       if (result.status.id !== 3) {
@@ -258,8 +259,6 @@ const getSolvedProblem = asyncHandler(async (req, res) => {
             },
         },
     ])
-
-    console.log("Problems: ", problems)
 
     return res
         .status(200)
