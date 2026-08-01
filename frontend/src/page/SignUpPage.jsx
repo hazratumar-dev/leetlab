@@ -1,43 +1,39 @@
-import React, {useState} from 'react'
-import {useForm} from "react-hook-form"
-import {zodResolver} from "@hookform/resolvers/zod"
-import { Link } from 'react-router-dom'
-import {
-    Code,
-    Eye,
-    EyeOff,
-    Loader2,
-    Lock,
-    Mail
-} from "lucide-react";
-import {z} from "zod";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Link } from "react-router-dom";
+import { Code, Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
+import { z } from "zod";
 import { useAuthStore } from "../store/useAuthStore";
-import AuthImagePattern from "../components/AuthImagePattern"
-
+import AuthImagePattern from "../components/AuthImagePattern";
 
 const signSchema = z.object({
-    email: z.email("Enter a valid email"),
-    password: z.string().min(8, "password must be atleast 8 character"),
-    name: z.string().min(3, "name must be atleast 3 character"),
-})
-
+  email: z.email("Enter a valid email"),
+  password: z.string().min(8, "password must be atleast 8 character"),
+  username: z.string().min(3, "username must be atleast 3 character"),
+});
 
 const SignUpPage = () => {
-    const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-    const {signup, isSigninUp} = useAuthStore
+  const { signUp, isSigninUp } = useAuthStore();
 
-    const {
-        register,
-        handleSubmit,
-        formState: {errors},
-    } = useForm({
-        resolver: zodResolver(signSchema)
-    });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(signSchema),
+  });
 
-    const onSubmit = async (data) => {
-        console.log(data)
+  const onSubmit = async (data) => {
+    try {
+      await signUp(data);
+      console.log("sign up data", data);
+    } catch (error) {
+      console.error("sign up failed ", error);
     }
+  };
 
   return (
     <div className="h-screen grid lg:grid-cols-2">
@@ -56,10 +52,10 @@ const SignUpPage = () => {
 
           {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* name */}
+            {/* username */}
             <div className="form-control">
               <label className="label">
-                <span className="label-text font-medium">Name</span>
+                <span className="label-text font-medium">Username</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -67,16 +63,16 @@ const SignUpPage = () => {
                 </div>
                 <input
                   type="text"
-                  {...register("name")}
+                  {...register("username")}
                   className={`input input-bordered w-full pl-10 ${
-                    errors.name ? "input-error" : ""
+                    errors.username ? "input-error" : ""
                   }`}
                   placeholder="John Doe"
                 />
               </div>
-              {errors.name && (
+              {errors.username && (
                 <p className="text-red-500 text-sm mt-1">
-                  {errors.name.message}
+                  {errors.username.message}
                 </p>
               )}
             </div>
@@ -180,6 +176,6 @@ const SignUpPage = () => {
       />
     </div>
   );
-}
+};
 
-export default SignUpPage
+export default SignUpPage;

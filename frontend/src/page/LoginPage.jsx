@@ -1,42 +1,38 @@
-import React, {useState} from 'react'
-import {useForm} from "react-hook-form"
-import {zodResolver} from "@hookform/resolvers/zod"
-import { Link } from 'react-router-dom'
-import {
-    Code,
-    Eye,
-    EyeOff,
-    Loader2,
-    Lock,
-    Mail
-} from "lucide-react";
-import {z} from "zod";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Link } from "react-router-dom";
+import { Code, Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
+import { z } from "zod";
 import { useAuthStore } from "../store/useAuthStore";
-import AuthImagePattern from "../components/AuthImagePattern"
-
+import AuthImagePattern from "../components/AuthImagePattern";
 
 const loginSchema = z.object({
-    email: z.email("Enter a valid email"),
-    password: z.string().min(8, "password must be atleast 8 character"),
-})
-
+  email: z.email("Enter a valid email"),
+  password: z.string().min(8, "password must be atleast 8 character"),
+});
 
 const LoginPage = () => {
-    const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-    const {signup, isSigninUp} = useAuthStore
+  const { login, isLoggingIn } = useAuthStore();
 
-    const {
-        register,
-        handleSubmit,
-        formState: {errors},
-    } = useForm({
-        resolver: zodResolver(loginSchema)
-    });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(loginSchema),
+  });
 
-    const onSubmit = async (data) => {
-        console.log(data)
+  const onSubmit = async (data) => {
+    try {
+      await login(data)
+      console.log("login data ", data)
+    } catch (error) {
+      console.error("login failed ", error);
     }
+  };
 
   return (
     <div className="h-screen grid lg:grid-cols-2">
@@ -120,9 +116,9 @@ const LoginPage = () => {
             <button
               type="submit"
               className="btn btn-primary w-full"
-              disabled={isSigninUp}
+              disabled={isLoggingIn}
             >
-              {isSigninUp ? (
+              {isLoggingIn ? (
                 <>
                   <Loader2 className="h-5 w-5 animate-spin" />
                   Loading...
@@ -154,6 +150,6 @@ const LoginPage = () => {
       />
     </div>
   );
-}
+};
 
-export default LoginPage
+export default LoginPage;
