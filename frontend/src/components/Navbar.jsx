@@ -4,7 +4,9 @@ import { useAuthStore } from '../store/useAuthStore';
 import { Link } from 'react-router-dom';
 
 
+
 import LogoutButton from './LogoutButton';
+import {UserRoleEnum} from "../lib/constant.js"
 
 const Navbar = () => {
 
@@ -29,7 +31,7 @@ const Navbar = () => {
                 <img
                   src={
                     authUser?.image ||
-                    "https://avatar.iran.liara.run/public"
+                    "https://avatar.iran.liara.run/public/boy"
                   }
                   alt="User Avatar"
                   className="object-cover"
@@ -62,7 +64,7 @@ const Navbar = () => {
                   My Profile
                 </Link>
               </li>
-              {authUser?.role === "ADMIN" && (
+              {authUser.data.role === UserRoleEnum.ADMIN && (
                 <li>
                   <Link
                     to="/add-problem"

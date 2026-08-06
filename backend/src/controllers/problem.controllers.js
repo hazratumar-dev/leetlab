@@ -59,7 +59,6 @@ const getProblemById = asyncHandler(async (req, res) => {
 });
 
 const createProblem = asyncHandler(async (req, res) => {
-  // get the data from request body
   const {
     title,
     description,
@@ -67,27 +66,24 @@ const createProblem = asyncHandler(async (req, res) => {
     tags,
     examples,
     constraints,
-    testCases,
+    testcases,      // Fixed: matches frontend/Zod casing
     codeSnippets,
-    refrenceSolution,
+    referenceSolutions, // Fixed: matches frontend/Zod spelling/pluralization
   } = req.body;
 
-  // check the user role again
   if (req.user.role !== UserRoleEnum.ADMIN) {
     throw new ApiError(403, "You are not allowed to create a problem");
   }
 
-  // loop through each solution reference for different languages and validate them
-  for (const item of refrenceSolution) {
-    const language = item.language;
-    const solution = item.solution;
+  // Fixed: Loop through the referenceSolutions object using Object.entries
+  for (const [language, solution] of Object.entries(referenceSolutions || {})) {
     const languageId = getJudge0LanguageId(language);
 
     if (!languageId) {
       throw new ApiError(400, `Language ${language} is not supported`);
     }
 
-    const submissions = testCases.map(({ input, output }) => ({
+    const submissions = testcases.map(({ input, output }) => ({
       source_code: solution,
       language_id: languageId,
       stdin: input,
@@ -101,7 +97,6 @@ const createProblem = asyncHandler(async (req, res) => {
 
     for (let i = 0; i < results.length; i++) {
       const result = results[i];
-
       if (result.status.id !== 3) {
         throw new ApiError(
           400,
@@ -111,7 +106,6 @@ const createProblem = asyncHandler(async (req, res) => {
     }
   }
 
-  // Once all reference solutions pass validation, create the problem once
   const newProblem = await Problem.create({
     title,
     description,
@@ -119,15 +113,15 @@ const createProblem = asyncHandler(async (req, res) => {
     tags,
     examples,
     constraints,
-    testCases,
+    testcases,          // Fixed property name
     codeSnippets,
-    refrenceSolution,
+    referenceSolutions, // Fixed property name
     user: req.user._id,
   });
 
   return res
     .status(201)
-    .json(new ApiResponse(201, newProblem, "problem create successfully"));
+    .json(new ApiResponse(201, newProblem, "problem created successfully"));
 });
 
 const updateProblem = asyncHandler(async (req, res) => {
@@ -139,30 +133,27 @@ const updateProblem = asyncHandler(async (req, res) => {
     tags,
     examples,
     constraints,
-    testCases,
+    testcases,
     codeSnippets,
-    refrenceSolution,
+    referenceSolutions,
   } = req.body;
 
   if (!problemId) {
-    throw new ApiError(400, "Inalid problem");
+    throw new ApiError(400, "Invalid problem");
   }
 
   if (req.user.role !== UserRoleEnum.ADMIN) {
     throw new ApiError(400, "You are not allowed to update problem");
   }
 
-  if (refrenceSolution && testCases) {
-    for (const item of refrenceSolution) {
-      const language = item.language;
-      const solution = item.solution;
+  if (referenceSolutions && testcases) {
+    for (const [language, solution] of Object.entries(referenceSolutions)) {
       const languageId = getJudge0LanguageId(language);
-
       if (!languageId) {
         throw new ApiError(400, `Language ${language} is not supported`);
       }
 
-      const submissions = testCases.map(({ input, output }) => ({
+      const submissions = testcases.map(({ input, output }) => ({
         source_code: solution,
         language_id: languageId,
         stdin: input,
@@ -171,16 +162,11 @@ const updateProblem = asyncHandler(async (req, res) => {
 
       const submissionResult = await submitBatch(submissions);
       const tokens = submissionResult.map((res) => res.token);
-
       const results = await pollBatchResults(tokens);
 
       for (let i = 0; i < results.length; i++) {
-        const result = results[i];
-        if (result.status.id !== 3) {
-          throw new ApiError(
-            400,
-            `Testcase ${i + 1} failed for language ${language}`
-          );
+        if (results[i].status.id !== 3) {
+          throw new ApiError(400, `Testcase ${i + 1} failed for language ${language}`);
         }
       }
     }
@@ -196,15 +182,12 @@ const updateProblem = asyncHandler(async (req, res) => {
         ...(tags && { tags }),
         ...(examples && { examples }),
         ...(constraints && { constraints }),
-        ...(testCases && { testCases }),
+        ...(testcases && { testcases }),
         ...(codeSnippets && { codeSnippets }),
-        ...(refrenceSolution && { refrenceSolution }),
+        ...(referenceSolutions && { referenceSolutions }),
       },
     },
-    {
-      new: true,
-      runValidator: true,
-    }
+    { new: true, runValidators: true } // also fixed: "runValidator" -> "runValidators"
   );
 
   if (!updatedProblem) {
@@ -213,9 +196,7 @@ const updateProblem = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(
-      new ApiResponse(200, { updatedProblem }, "problem updated successfully")
-    );
+    .json(new ApiResponse(200, { updatedProblem }, "problem updated successfully"));
 });
 
 const deleteProblemById = asyncHandler(async (req, res) => {
