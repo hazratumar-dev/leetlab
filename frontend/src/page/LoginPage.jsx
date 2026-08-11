@@ -27,8 +27,7 @@ const LoginPage = () => {
 
   const onSubmit = async (data) => {
     try {
-      await login(data)
-      console.log("login data ", data)
+      await login(data);
     } catch (error) {
       console.error("login failed ", error);
     }

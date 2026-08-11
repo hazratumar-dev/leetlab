@@ -1,12 +1,21 @@
-import React, { useState } from 'react';
-import { useForm, useFieldArray, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from "react";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Plus, Trash2, Code2, FileText, Lightbulb, BookOpen, CheckCircle2, Download } from 'lucide-react';
+import {
+  Plus,
+  Trash2,
+  Code2,
+  FileText,
+  Lightbulb,
+  BookOpen,
+  CheckCircle2,
+  Download,
+} from "lucide-react";
 import Editor from "@monaco-editor/react";
-import { axiosInstance } from '../lib/axios.js';
-import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import { axiosInstance } from "../lib/axios.js";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const problemSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
@@ -21,7 +30,7 @@ const problemSchema = z.object({
       z.object({
         input: z.string().min(1, "Input is required"),
         output: z.string().min(1, "Output is required"),
-      })
+      }),
     )
     .min(1, "At least one test case is required"),
   examples: z.object({
@@ -56,202 +65,231 @@ const problemSchema = z.object({
 const sampledpData = {
   title: "Climbing Stairs",
   category: "dp",
-  description: "You are climbing a staircase. It takes n steps to reach the top. Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?",
+  description:
+    "You are climbing a staircase. It takes n steps to reach the top. Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?",
   difficulty: "easy",
   tags: ["Dynamic Programming", "Math", "Memoization"],
   constraints: "1 <= n <= 45",
-  hints: "To reach the nth step, you can either come from the (n-1)th step or the (n-2)th step.",
+  hints:
+    "To reach the nth step, you can either come from the (n-1)th step or the (n-2)th step.",
   editorial: "This is a classic dynamic programming problem...",
   testcases: [
     { input: "2", output: "2" },
     { input: "3", output: "3" },
-    { input: "4", output: "5" }
+    { input: "4", output: "5" },
   ],
   examples: {
     JAVASCRIPT: {
       input: "n = 2",
       output: "2",
-      explanation: "There are two ways to climb to the top:\n1. 1 step + 1 step\n2. 2 steps"
+      explanation:
+        "There are two ways to climb to the top:\n1. 1 step + 1 step\n2. 2 steps",
     },
     PYTHON: {
       input: "n = 2",
       output: "2",
-      explanation: "There are two ways to climb to the top."
+      explanation: "There are two ways to climb to the top.",
     },
     JAVA: {
       input: "n = 2",
       output: "2",
-      explanation: "There are two ways to climb to the top."
-    }
+      explanation: "There are two ways to climb to the top.",
+    },
   },
   codeSnippets: {
     JAVASCRIPT: "function climbStairs(n) {\n  // Write your code here\n}",
-    PYTHON: "class Solution:\n    def climbStairs(self, n: int) -> int:\n        pass",
-    JAVA: "class Solution {\n    public int climbStairs(int n) {\n        // Write your code here\n    }\n}"
+    PYTHON:
+      "class Solution:\n    def climbStairs(self, n: int) -> int:\n        pass",
+    JAVA: "class Solution {\n    public int climbStairs(int n) {\n        // Write your code here\n    }\n}",
   },
   referenceSolutions: {
-    JAVASCRIPT: "function climbStairs(n) {\n    if (n <= 2) return n;\n    let dp = new Array(n + 1);\n    dp[1] = 1;\n    dp[2] = 2;\n    for (let i = 3; i <= n; i++) {\n        dp[i] = dp[i - 1] + dp[i - 2];\n    }\n    return dp[n];\n}\nconst input = require('fs').readFileSync(0, 'utf-8').trim();\nconsole.log(climbStairs(Number(input)));",
-    PYTHON: "class Solution:\n    def climbStairs(self, n: int) -> int:\n        if n <= 2:\n            return n\n        dp = [0] * (n + 1)\n        dp[1] = 1\n        dp[2] = 2\n        for i in range(3, n + 1):\n            dp[i] = dp[i-1] + dp[i-2]\n        return dp[n]\n\nimport sys\ninput_val = int(sys.stdin.read().strip())\nprint(Solution().climbStairs(input_val))",
-    JAVA: "import java.util.Scanner;\nclass Main {\n    public int climbStairs(int n) {\n        if (n <= 2) return n;\n        int[] dp = new int[n + 1];\n        dp[1] = 1;\n        dp[2] = 2;\n        for (int i = 3; i <= n; i++) {\n            dp[i] = dp[i - 1] + dp[i - 2];\n        }\n        return dp[n];\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        if(scanner.hasNextInt()) {\n            int n = scanner.nextInt();\n            System.out.println(new Main().climbStairs(n));\n        }\n    }\n}"
-  }
+    JAVASCRIPT:
+      "function climbStairs(n) {\n    if (n <= 2) return n;\n    let dp = new Array(n + 1);\n    dp[1] = 1;\n    dp[2] = 2;\n    for (let i = 3; i <= n; i++) {\n        dp[i] = dp[i - 1] + dp[i - 2];\n    }\n    return dp[n];\n}\nconst input = require('fs').readFileSync(0, 'utf-8').trim();\nconsole.log(climbStairs(Number(input)));",
+    PYTHON:
+      "class Solution:\n    def climbStairs(self, n: int) -> int:\n        if n <= 2:\n            return n\n        dp = [0] * (n + 1)\n        dp[1] = 1\n        dp[2] = 2\n        for i in range(3, n + 1):\n            dp[i] = dp[i-1] + dp[i-2]\n        return dp[n]\n\nimport sys\ninput_val = int(sys.stdin.read().strip())\nprint(Solution().climbStairs(input_val))",
+    JAVA: "import java.util.Scanner;\nclass Main {\n    public int climbStairs(int n) {\n        if (n <= 2) return n;\n        int[] dp = new int[n + 1];\n        dp[1] = 1;\n        dp[2] = 2;\n        for (int i = 3; i <= n; i++) {\n            dp[i] = dp[i - 1] + dp[i - 2];\n        }\n        return dp[n];\n    }\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        if(scanner.hasNextInt()) {\n            int n = scanner.nextInt();\n            System.out.println(new Main().climbStairs(n));\n        }\n    }\n}",
+  },
 };
 
 const sampleStringProblem = {
   title: "Valid Palindrome",
   category: "string",
-  description: "A phrase is a palindrome if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward. Alphanumeric characters include letters and numbers. Given a string s, return true if it is a palindrome, or false otherwise.",
+  description:
+    "A phrase is a palindrome if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward. Alphanumeric characters include letters and numbers. Given a string s, return true if it is a palindrome, or false otherwise.",
   difficulty: "easy",
   tags: ["String", "Two Pointers"],
-  constraints: "1 <= s.length <= 2 * 10^5\ns consists only of printable ASCII characters.",
-  hints: "Consider using two pointers, one from the start and one from the end, moving towards the center.",
-  editorial: "We can use two pointers approach to check if the string is a palindrome.",
+  constraints:
+    "1 <= s.length <= 2 * 10^5\ns consists only of printable ASCII characters.",
+  hints:
+    "Consider using two pointers, one from the start and one from the end, moving towards the center.",
+  editorial:
+    "We can use two pointers approach to check if the string is a palindrome.",
   testcases: [
-    { input: "A man, a plan, a canal: Panama", output: "true" },
-    { input: "race a car", output: "false" },
-    { input: " ", output: "true" }
+    {
+      input: "A man, a plan, a canal: Panama",
+      output: "true",
+    },
+    {
+      input: "race a car",
+      output: "false",
+    },
+    {
+      input: " ",
+      output: "true",
+    },
   ],
   examples: {
     JAVASCRIPT: {
-      input: "s = \"A man, a plan, a canal: Panama\"",
+      input: 's = "A man, a plan, a canal: Panama"',
       output: "true",
-      explanation: "\"amanaplanacanalpanama\" is a palindrome."
+      explanation: '"amanaplanacanalpanama" is a palindrome.',
     },
     PYTHON: {
-      input: "s = \"A man, a plan, a canal: Panama\"",
+      input: 's = "A man, a plan, a canal: Panama"',
       output: "true",
-      explanation: "\"amanaplanacanalpanama\" is a palindrome."
+      explanation: '"amanaplanacanalpanama" is a palindrome.',
     },
     JAVA: {
-      input: "s = \"A man, a plan, a canal: Panama\"",
+      input: 's = "A man, a plan, a canal: Panama"',
       output: "true",
-      explanation: "\"amanaplanacanalpanama\" is a palindrome."
-    }
+      explanation: '"amanaplanacanalpanama" is a palindrome.',
+    },
   },
   codeSnippets: {
     JAVASCRIPT: "function isPalindrome(s) {\n  // Write your code here\n}",
-    PYTHON: "class Solution:\n    def isPalindrome(self, s: str) -> bool:\n        pass",
-    JAVA: "class Solution {\n    public boolean isPalindrome(String s) {\n        // Write your code here\n    }\n}"
+    PYTHON:
+      "class Solution:\n    def isPalindrome(self, s: str) -> bool:\n        pass",
+    JAVA: "class Solution {\n    public boolean isPalindrome(String s) {\n        // Write your code here\n    }\n}",
   },
   referenceSolutions: {
-  JAVASCRIPT: `function isPalindrome(s) {
-  s = s.toLowerCase().replace(/[^a-z0-9]/g, '');
-  let left = 0, right = s.length - 1;
-  while (left < right) {
-    if (s[left] !== s[right]) return false;
-    left++; right--;
-  }
-  return true;
-}
-const input = require('fs').readFileSync(0, 'utf-8');
-console.log(isPalindrome(input.endsWith('\\n') ? input.slice(0, -1) : input));`,
+    JAVASCRIPT: `function isPalindrome(s) {
+    s = s.toLowerCase().replace(/[^a-z0-9]/g, '');
+    let left = 0, right = s.length - 1;
+    while (left < right) {
+        if (s[left] !== s[right]) return false;
+        left++; right--;
+    }
+    return true;
+    }
+    const input = require('fs').readFileSync(0, 'utf-8');
+    console.log(isPalindrome(input.endsWith('\\n') ? input.slice(0, -1) : input));`,
 
-  PYTHON: `class Solution:
-    def isPalindrome(self, s: str) -> bool:
-        filtered = [c.lower() for c in s if c.isalnum()]
-        return filtered == filtered[::-1]
+    PYTHON: `class Solution:
+        def isPalindrome(self, s: str) -> bool:
+            filtered = [c.lower() for c in s if c.isalnum()]
+            return filtered == filtered[::-1]
 
-import sys
-s = sys.stdin.readline().rstrip('\\n')
-print(str(Solution().isPalindrome(s)).lower())`,
+    import sys
+    s = sys.stdin.readline().rstrip('\\n')
+    print(str(Solution().isPalindrome(s)).lower())`,
 
-  JAVA: `import java.util.Scanner;
-class Main {
-    public boolean isPalindrome(String s) {
-        String clean = s.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-        int l = 0, r = clean.length() - 1;
-        while(l < r) {
-            if(clean.charAt(l) != clean.charAt(r)) return false;
-            l++; r--;
+    JAVA: `import java.util.Scanner;
+    class Main {
+        public boolean isPalindrome(String s) {
+            String clean = s.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+            int l = 0, r = clean.length() - 1;
+            while(l < r) {
+                if(clean.charAt(l) != clean.charAt(r)) return false;
+                l++; r--;
+            }
+            return true;
         }
-        return true;
-    }
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        String line = scanner.nextLine();
-        System.out.println(new Main().isPalindrome(line));
-    }
-}`
-}
+        public static void main(String[] args) {
+            Scanner scanner = new Scanner(System.in);
+            String line = scanner.nextLine();
+            System.out.println(new Main().isPalindrome(line));
+        }
+    }`,
+  },
 };
 
 const CreateProblemForm = () => {
-    const [sampleType, setSampleType] = useState("DP");
-    const navigation = useNavigate();
-    const { register, control, handleSubmit, reset, formState: { errors } } = useForm({
-        resolver: zodResolver(problemSchema),
-        defaultValues: {
-            title: "",
-            description: "",
-            difficulty: "easy",
-            constraints: "",
-            hints: "",
-            editorial: "",
-            testcases: [{ input: "", output: "" }],
-            tags: [""],
-            examples: {
-                JAVASCRIPT: { input: "", output: "", explanation: "" },
-                PYTHON: { input: "", output: "", explanation: "" },
-                JAVA: { input: "", output: "", explanation: "" },
-            },
-            codeSnippets: {
-                JAVASCRIPT: "function solution() {\n  // Write your code here\n}",
-                PYTHON: "def solution():\n    # Write your code here\n    pass",
-                JAVA: "public class Solution {\n    public static void main(String[] args) {\n        // Write your code here\n    }\n}",
-            },
-            referenceSolutions: {
-                JAVASCRIPT: "// Add your reference solution here",
-                PYTHON: "# Add your reference solution here",
-                JAVA: "// Add your reference solution here",
-            },
-        }
-    });
+  const [sampleType, setSampleType] = useState("DP");
+  const navigation = useNavigate();
+  const {
+    register,
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(problemSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      difficulty: "easy",
+      constraints: "",
+      hints: "",
+      editorial: "",
+      testcases: [{ input: "", output: "" }],
+      tags: [""],
+      examples: {
+        JAVASCRIPT: { input: "", output: "", explanation: "" },
+        PYTHON: { input: "", output: "", explanation: "" },
+        JAVA: { input: "", output: "", explanation: "" },
+      },
+      codeSnippets: {
+        JAVASCRIPT: "function solution() {\n  // Write your code here\n}",
+        PYTHON: "def solution():\n    # Write your code here\n    pass",
+        JAVA: "public class Solution {\n    public static void main(String[] args) {\n        // Write your code here\n    }\n}",
+      },
+      referenceSolutions: {
+        JAVASCRIPT: "// Add your reference solution here",
+        PYTHON: "# Add your reference solution here",
+        JAVA: "// Add your reference solution here",
+      },
+    },
+  });
 
-    const {
-        fields: testCaseFields,
-        append: appendTestCase,
-        replace: replaceTestCase,
-        remove: removeTestCase
-    } = useFieldArray({
-        control,
-        name: "testcases"
-    });
+  const {
+    fields: testCaseFields,
+    append: appendTestCase,
+    replace: replaceTestCase,
+    remove: removeTestCase,
+  } = useFieldArray({
+    control,
+    name: "testcases",
+  });
 
-    const {
-        fields: tagsFields,
-        append: appendTag,
-        remove: removeTag,
-        replace: replaceTag
-    } = useFieldArray({
-        control,
-        name: "tags"
-    });
+  const {
+    fields: tagsFields,
+    append: appendTag,
+    remove: removeTag,
+    replace: replaceTag,
+  } = useFieldArray({
+    control,
+    name: "tags",
+  });
 
-    const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-    const onSubmit = async (value) => {
-        try {
-            setIsLoading(true);
-            const response = await axiosInstance.post("/problems/create-problem", value);
-            toast.success(response.data.message || "Problem created successfully");
-            navigation("/");
-        } catch (error) {
-            console.log(error);
-            toast.error("Error creating problem");
-        } finally {
-            setIsLoading(false);
-        }
-    };
+  const onSubmit = async (value) => {
+    try {
+      setIsLoading(true);
+      const response = await axiosInstance.post(
+        "/problems/create-problem",
+        value,
+      );
+      toast.success(response.data.message || "Problem created successfully");
+      navigation("/");
+    } catch (error) {
+      console.log(error);
+      toast.error("Error creating problem");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    const loadSampleData = () => {
-        const sampleData = sampleType === "DP" ? sampledpData : sampleStringProblem;
-        replaceTag(sampleData.tags);
-        replaceTestCase(sampleData.testcases);
-        reset(sampleData);
-    };
+  const loadSampleData = () => {
+    const sampleData = sampleType === "DP" ? sampledpData : sampleStringProblem;
+    replaceTag(sampleData.tags);
+    replaceTestCase(sampleData.testcases);
+    reset(sampleData);
+  };
 
   return (
-    <div className='container mx-auto py-8 px-4 max-w-7xl'>
-        <div className="card bg-base-100 shadow-xl">
+    <div className="container mx-auto py-8 px-4 max-w-7xl">
+      <div className="card bg-base-100 shadow-xl">
         <div className="card-body p-6 md:p-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 pb-4 border-b">
             <h2 className="card-title text-2xl md:text-3xl flex items-center gap-3">
@@ -438,7 +476,9 @@ const CreateProblemForm = () => {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         <div className="form-control">
                           <label className="label">
-                            <span className="label-text font-medium">Input</span>
+                            <span className="label-text font-medium">
+                              Input
+                            </span>
                           </label>
                           <textarea
                             className="textarea textarea-bordered min-h-24 w-full p-3 resize-y"
@@ -455,7 +495,9 @@ const CreateProblemForm = () => {
                         </div>
                         <div className="form-control">
                           <label className="label">
-                            <span className="label-text font-medium">Expected Output</span>
+                            <span className="label-text font-medium">
+                              Expected Output
+                            </span>
                           </label>
                           <textarea
                             className="textarea textarea-bordered min-h-24 w-full p-3 resize-y"
@@ -585,7 +627,9 @@ const CreateProblemForm = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                           <div className="form-control">
                             <label className="label">
-                              <span className="label-text font-medium">Input</span>
+                              <span className="label-text font-medium">
+                                Input
+                              </span>
                             </label>
                             <textarea
                               className="textarea textarea-bordered min-h-20 w-full p-3 resize-y"
@@ -602,7 +646,9 @@ const CreateProblemForm = () => {
                           </div>
                           <div className="form-control">
                             <label className="label">
-                              <span className="label-text font-medium">Output</span>
+                              <span className="label-text font-medium">
+                                Output
+                              </span>
                             </label>
                             <textarea
                               className="textarea textarea-bordered min-h-20 w-full p-3 resize-y"
@@ -619,7 +665,9 @@ const CreateProblemForm = () => {
                           </div>
                           <div className="form-control md:col-span-2">
                             <label className="label">
-                              <span className="label-text font-medium">Explanation</span>
+                              <span className="label-text font-medium">
+                                Explanation
+                              </span>
                             </label>
                             <textarea
                               className="textarea textarea-bordered min-h-24 w-full p-3 resize-y"

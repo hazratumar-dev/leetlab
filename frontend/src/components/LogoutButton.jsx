@@ -1,24 +1,21 @@
-import React from 'react';
-import { useAuthStore } from '../store/useAuthStore.jsx';
+import { useAuthStore } from "../store/useAuthStore.js";
 
+const LogoutButton = ({ children }) => {
+  const { logout } = useAuthStore();
 
-const LogoutButton = ({children}) => {
-
-    const {logout} = useAuthStore();
-
-    const onLogout = async() => {
-        try {
-            await logout()
-        } catch (error) {
-            console.error("logout failed ", error);
-        }
+  const onLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("logout failed ", error);
     }
+  };
 
   return (
-    <button className='btn btn-primary ' onClick={onLogout}>
-        {children}
+    <button className="btn btn-primary " onClick={onLogout}>
+      {children}
     </button>
-  )
-}
+  );
+};
 
-export default LogoutButton
+export default LogoutButton;

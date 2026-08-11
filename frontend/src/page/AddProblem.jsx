@@ -1,10 +1,12 @@
-import React from 'react'
-import CreateProblemForm from '../components/CreateProblemForm';
+import React from "react";
+import CreateProblemForm from "../components/CreateProblemForm";
 
 const AddProblem = () => {
   return (
-    <div><CreateProblemForm/></div>
-  )
-}
+    <div>
+      <CreateProblemForm />
+    </div>
+  );
+};
 
-export default AddProblem
+export default AddProblem;

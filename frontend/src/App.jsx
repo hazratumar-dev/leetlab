@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import { useAuthStore } from "./store/useAuthStore.jsx";
+import { useAuthStore } from "./store/useAuthStore.js";
 import { Loader } from "lucide-react";
 
 import HomePage from "./page/HomePage.jsx";
@@ -10,6 +10,7 @@ import SignUpPage from "./page/SignUpPage.jsx";
 import Layout from "./layout/Layout.jsx";
 import AdminRoute from "./components/AdminRoute.jsx";
 import AddProblem from "./page/AddProblem.jsx";
+import ProblemPage from "./page/ProblemPage.jsx";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -36,7 +37,7 @@ const App = () => {
             element={authUser ? <HomePage /> : <Navigate to={"/login"} />}
           />
         </Route>
-      
+
         <Route
           path="/login"
           element={!authUser ? <LoginPage /> : <Navigate to={"/"} />}
@@ -46,10 +47,15 @@ const App = () => {
           element={!authUser ? <SignUpPage /> : <Navigate to={"/"} />}
         />
 
+        <Route
+          path="/problems/:problemId"
+          element={authUser ? <ProblemPage /> : <Navigate to={"/login"} />}
+        />
+
         <Route element={<AdminRoute />}>
-          <Route 
+          <Route
             path="add-problem"
-            element={authUser ? <AddProblem/> : <Navigate to={"/"} />}
+            element={authUser ? <AddProblem /> : <Navigate to={"/"} />}
           />
         </Route>
       </Routes>
