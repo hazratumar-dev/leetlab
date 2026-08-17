@@ -34,7 +34,7 @@ const Navbar = () => {
                 <img
                   src={
                     authUser?.image ||
-                    "https://avatar.iran.liara.run/public/boy"
+                    "hello"
                   }
                   alt="User Avatar"
                   className="object-cover"

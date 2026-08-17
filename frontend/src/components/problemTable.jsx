@@ -2,9 +2,13 @@ import React, { useState, useMemo } from "react";
 import { useAuthStore } from "../store/useAuthStore.js";
 import { Link } from "react-router-dom";
 import { Bookmark, PencilIcon, Trash, TrashIcon, Plus } from "lucide-react";
+import { useAction } from "../store/useAction.js";
+
+
 
 const ProblemTable = ({ problems }) => {
-  const { authUser } = useAuthStore();
+    const { authUser } = useAuthStore();
+    const { isDeletingProblem, onDeleteProblem } = useAction();
   const [search, setSearch] = useState("");
   const [difficulty, setDifficulty] = useState("ALL");
   const [selectedTag, setSelectedTag] = useState("ALL");
@@ -12,7 +16,9 @@ const ProblemTable = ({ problems }) => {
 
   const difficulties = ["easy", "medium", "hard"];
 
-  const handleDelete = (problemId) => {};
+    const handleDelete = (problemId) => {
+        onDeleteProblem(problemId)
+    };
 
   const handleAddToPlaylist = (problemId) => {};
 

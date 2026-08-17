@@ -1,23 +1,38 @@
-import React from 'react';
-import { CheckCircle2, XCircle, Clock, MemoryStick as Memory } from 'lucide-react';
+import React from "react";
+import {
+  CheckCircle2,
+  XCircle,
+  Clock,
+  MemoryStick as Memory,
+} from "lucide-react";
 
 const SubmissionResults = ({ submission }) => {
-  // Parse stringified arrays
-  const memoryArr = JSON.parse(submission.memory || '[]');
-  const timeArr = JSON.parse(submission.time || '[]');
+  const testCasesArray = submission?.submissionWithTestCases || [];
 
-  // Calculate averages
-  const avgMemory = memoryArr
-    .map(m => parseFloat(m))
-    .reduce((a, b) => a + b, 0) / memoryArr.length;
+  const memoryArr = testCasesArray.map((tc) => parseFloat(tc.memory) || 0);
+  const timeArr = testCasesArray.map((tc) => parseFloat(tc.time) || 0);
 
-  const avgTime = timeArr
-    .map(t => parseFloat(t))
-    .reduce((a, b) => a + b, 0) / timeArr.length;
+  const avgMemory = memoryArr.reduce((a, b) => a + b, 0) / memoryArr.length;
 
-  const passedTests = submission.testCases.filter(tc => tc.passed).length;
-  const totalTests = submission.testCases.length;
+  const avgTime = timeArr.reduce((a, b) => a + b, 0) / timeArr.length;
+
+  const passedTests = testCasesArray.filter((tc) => tc.passed).length;
+  const totalTests = testCasesArray.length;
   const successRate = (passedTests / totalTests) * 100;
+
+  const allPassed =
+    testCasesArray.length > 0 &&
+    testCasesArray.every((tc) => tc.status === "Accepted");
+  const failedTestCase = testCasesArray.find((tc) => tc.status !== "Accepted");
+
+  const overallStatus =
+    testCasesArray.length === 0
+      ? "No Submission"
+      : allPassed
+        ? "Accepted"
+        : failedTestCase
+          ? failedTestCase.status
+          : "Failed";
 
   return (
     <div className="space-y-6">
@@ -26,10 +41,12 @@ const SubmissionResults = ({ submission }) => {
         <div className="card bg-base-200 shadow-lg">
           <div className="card-body p-4">
             <h3 className="card-title text-sm">Status</h3>
-            <div className={`text-lg font-bold ${
-              submission.status === 'Accepted' ? 'text-success' : 'text-error'
-            }`}>
-              {submission.status}
+            <div
+              className={`text-lg font-bold ${
+                overallStatus === "Accepted" ? "text-success" : "text-error"
+              }`}
+            >
+              {overallStatus}
             </div>
           </div>
         </div>
@@ -37,9 +54,7 @@ const SubmissionResults = ({ submission }) => {
         <div className="card bg-base-200 shadow-lg">
           <div className="card-body p-4">
             <h3 className="card-title text-sm">Success Rate</h3>
-            <div className="text-lg font-bold">
-              {successRate.toFixed(1)}%
-            </div>
+            <div className="text-lg font-bold">{successRate.toFixed(1)}%</div>
           </div>
         </div>
 
@@ -49,9 +64,7 @@ const SubmissionResults = ({ submission }) => {
               <Clock className="w-4 h-4" />
               Avg. Runtime
             </h3>
-            <div className="text-lg font-bold">
-              {avgTime.toFixed(3)} s
-            </div>
+            <div className="text-lg font-bold">{avgTime.toFixed(3)} S</div>
           </div>
         </div>
 
@@ -61,9 +74,7 @@ const SubmissionResults = ({ submission }) => {
               <Memory className="w-4 h-4" />
               Avg. Memory
             </h3>
-            <div className="text-lg font-bold">
-              {avgMemory.toFixed(0)} KB
-            </div>
+            <div className="text-lg font-bold">{avgMemory.toFixed(0)} KB</div>
           </div>
         </div>
       </div>
@@ -84,8 +95,8 @@ const SubmissionResults = ({ submission }) => {
                 </tr>
               </thead>
               <tbody>
-                {submission.testCases.map((testCase) => (
-                  <tr key={testCase.id}>
+                {testCasesArray.map((testCase) => (
+                  <tr key={testCase._id}>
                     <td>
                       {testCase.passed ? (
                         <div className="flex items-center gap-2 text-success">
@@ -100,7 +111,7 @@ const SubmissionResults = ({ submission }) => {
                       )}
                     </td>
                     <td className="font-mono">{testCase.expected}</td>
-                    <td className="font-mono">{testCase.stdout || 'null'}</td>
+                    <td className="font-mono">{testCase.stdout || "null"}</td>
                     <td>{testCase.memory}</td>
                     <td>{testCase.time}</td>
                   </tr>

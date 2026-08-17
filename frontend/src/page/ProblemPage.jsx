@@ -20,40 +20,59 @@ import {
 
 import { useProblemStore } from "../store/useProblemStore.js";
 import { useExecutionStore } from "../store/useExecutionStore.js";
-import  SubmissionResults  from "../components/Submission.jsx";
+import SubmissionResults from "../components/Submission.jsx";
 import { getLanguageId } from "../lib/lang.js";
+import SubmissionsList from "../components/SubmissionList.jsx";
+import { useSubmissionStore } from "../store/useSubmissionStore.js";
 
 const ProblemPage = () => {
   const { problemId } = useParams();
-    const { getProblemById, problem, isProblemLoading } = useProblemStore();
+  const { getProblemById, problem, isProblemLoading } = useProblemStore();
     const { isExecuting, submission, executeCode } = useExecutionStore();
-
+    const {
+        submission: submissions,
+        isLoading: isSubmissionsLoading,
+        getAllSubmissions,
+        getSubmissionForProblem,
+        getSubmissionCountForProblem,
+        submissionCount
+    } = useSubmissionStore();
   const [code, setCode] = useState("");
   const [activeTab, setActiveTab] = useState("description");
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [testCases, setTestCases] = useState([]);
 
-    const submissionCount = 100;
 
   useEffect(() => {
-    getProblemById(problemId);
-  }, [problemId, getProblemById]);
+      getProblemById(problemId);
+      getSubmissionCountForProblem(problemId)
+  }, [problemId, getProblemById, getSubmissionCountForProblem]);
 
   useEffect(() => {
     if (problem) {
-      setCode(problem.data.codeSnippets?.[selectedLanguage] || "");
+      setCode(
+        problem.data.codeSnippets?.[selectedLanguage] ||
+          submission?.sourceCode ||
+          "",
+      );
 
       setTestCases(
-        problem.data.testCases?.map((testcase) => ({
+        problem.data.testcases?.map((testcase) => ({
           input: testcase.input,
           output: testcase.output,
         })) || [],
       );
     }
-  }, [problem]);
+  }, [problem, selectedLanguage]);
 
-  const handleLanguageChange = (e) => {
+    useEffect(() => {
+        if (activeTab === "submissions" && problemId) {
+            getSubmissionForProblem(problemId)
+        }
+    }, [activeTab, problemId])
+
+    const handleLanguageChange = (e) => {
     const lang = e.target.value;
     setSelectedLanguage(lang);
     setCode(problem.data.codeSnippets?.[lang] || "");
@@ -153,28 +172,30 @@ const ProblemPage = () => {
     }
   };
 
-    if (!problem) {
+  if (!problem || isProblemLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-base-300">
         <span className="loading loading-spinner loading-lg text-primary"></span>
       </div>
     );
+  }
+
+  const handleRunCode = (e) => {
+    e.preventDefault();
+    try {
+      const languageId = getLanguageId(selectedLanguage);
+      const stdin = problem.data.testcases.map((testcase) => testcase.input);
+      const expectedOutPut = problem.data.testcases.map(
+        (testcase) => testcase.output,
+      );
+
+      executeCode(code, languageId, stdin, expectedOutPut, problemId);
+    } catch (error) {
+      console.log("error executing code", error);
     }
+  };
 
-    const handleRunCode = (e) => {
-        e.preventDefault();
-        try {
-            const languageId = getLanguageId(selectedLanguage);
-            const stdin = problem.data.testcases.map((testcase) => testcase.input);
-            const expectedOutPut = problem.data.testcases.map((testcase) => testcase.output);
-
-            executeCode(code, languageId, stdin, expectedOutPut, problemId)
-        } catch (error) {
-            console.log("error executing code", error)
-        }
-    }
-
-  return (
+    return (
     <div className="min-h-screen bg-linear-to-br from-base-300 to-base-200 max-w-7xl w-full">
       <nav className="navbar bg-base-100 shadow-lg px-4">
         <div className="flex-1 gap-2">
@@ -296,7 +317,7 @@ const ProblemPage = () => {
                     roundedSelection: false,
                     scrollBeyondLastLine: false,
                     readOnly: false,
-                      automaticLayout: true,
+                    automaticLayout: true,
                   }}
                 />
               </div>

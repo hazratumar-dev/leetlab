@@ -20,7 +20,7 @@ const SubmissionsList = ({ submissions, isLoading }) => {
   // Helper function to calculate average memory usage
   const calculateAverageMemory = (memoryData) => {
     const memoryArray = safeParse(memoryData).map((m) =>
-      parseFloat(m.split(" ")[0])
+      parseFloat(m.split(" ")[0]),
     );
     if (memoryArray.length === 0) return 0;
     return (
@@ -31,7 +31,7 @@ const SubmissionsList = ({ submissions, isLoading }) => {
   // Helper function to calculate average runtime
   const calculateAverageTime = (timeData) => {
     const timeArray = safeParse(timeData).map((t) =>
-      parseFloat(t.split(" ")[0])
+      parseFloat(t.split(" ")[0]),
     );
     if (timeArray.length === 0) return 0;
     return timeArray.reduce((acc, curr) => acc + curr, 0) / timeArray.length;
@@ -63,7 +63,7 @@ const SubmissionsList = ({ submissions, isLoading }) => {
 
         return (
           <div
-            key={submission.id}
+            key={submission._id}
             className="card bg-base-200 shadow-lg hover:shadow-xl transition-shadow rounded-lg"
           >
             <div className="card-body p-4">
@@ -81,7 +81,9 @@ const SubmissionsList = ({ submissions, isLoading }) => {
                       <span className="font-semibold">{submission.status}</span>
                     </div>
                   )}
-                  <div className="badge badge-neutral">{submission.language}</div>
+                  <div className="badge badge-neutral">
+                    {submission.language}
+                  </div>
                 </div>
 
                 {/* Right Section: Runtime, Memory, and Date */}
