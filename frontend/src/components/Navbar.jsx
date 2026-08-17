@@ -32,10 +32,7 @@ const Navbar = () => {
             >
               <div className="w-10 rounded-full ">
                 <img
-                  src={
-                    authUser?.image ||
-                    "hello"
-                  }
+                  src={authUser?.image || "hello"}
                   alt="User Avatar"
                   className="object-cover"
                 />

@@ -28,25 +28,24 @@ import { useSubmissionStore } from "../store/useSubmissionStore.js";
 const ProblemPage = () => {
   const { problemId } = useParams();
   const { getProblemById, problem, isProblemLoading } = useProblemStore();
-    const { isExecuting, submission, executeCode } = useExecutionStore();
-    const {
-        submission: submissions,
-        isLoading: isSubmissionsLoading,
-        getAllSubmissions,
-        getSubmissionForProblem,
-        getSubmissionCountForProblem,
-        submissionCount
-    } = useSubmissionStore();
+  const { isExecuting, submission, executeCode } = useExecutionStore();
+  const {
+    submission: submissions,
+    isLoading: isSubmissionsLoading,
+    getAllSubmissions,
+    getSubmissionForProblem,
+    getSubmissionCountForProblem,
+    submissionCount,
+  } = useSubmissionStore();
   const [code, setCode] = useState("");
   const [activeTab, setActiveTab] = useState("description");
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [testCases, setTestCases] = useState([]);
 
-
   useEffect(() => {
-      getProblemById(problemId);
-      getSubmissionCountForProblem(problemId)
+    getProblemById(problemId);
+    getSubmissionCountForProblem(problemId);
   }, [problemId, getProblemById, getSubmissionCountForProblem]);
 
   useEffect(() => {
@@ -66,13 +65,13 @@ const ProblemPage = () => {
     }
   }, [problem, selectedLanguage]);
 
-    useEffect(() => {
-        if (activeTab === "submissions" && problemId) {
-            getSubmissionForProblem(problemId)
-        }
-    }, [activeTab, problemId])
+  useEffect(() => {
+    if (activeTab === "submissions" && problemId) {
+      getSubmissionForProblem(problemId);
+    }
+  }, [activeTab, problemId]);
 
-    const handleLanguageChange = (e) => {
+  const handleLanguageChange = (e) => {
     const lang = e.target.value;
     setSelectedLanguage(lang);
     setCode(problem.data.codeSnippets?.[lang] || "");
@@ -195,7 +194,7 @@ const ProblemPage = () => {
     }
   };
 
-    return (
+  return (
     <div className="min-h-screen bg-linear-to-br from-base-300 to-base-200 max-w-7xl w-full">
       <nav className="navbar bg-base-100 shadow-lg px-4">
         <div className="flex-1 gap-2">

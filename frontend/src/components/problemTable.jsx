@@ -3,24 +3,32 @@ import { useAuthStore } from "../store/useAuthStore.js";
 import { Link } from "react-router-dom";
 import { Bookmark, PencilIcon, Trash, TrashIcon, Plus } from "lucide-react";
 import { useAction } from "../store/useAction.js";
-
+import { usePlaylistStore } from "../store/usePlaylistStore.js";
+import CreatePlaylistModel from "../components/CreatePlaylistModel.jsx";
 
 
 const ProblemTable = ({ problems }) => {
-    const { authUser } = useAuthStore();
-    const { isDeletingProblem, onDeleteProblem } = useAction();
+  const { authUser } = useAuthStore();
+  const { isDeletingProblem, onDeleteProblem } = useAction();
   const [search, setSearch] = useState("");
   const [difficulty, setDifficulty] = useState("ALL");
   const [selectedTag, setSelectedTag] = useState("ALL");
   const [currentPage, setCurrentPage] = useState(1);
+  const { createPlaylist } = usePlaylistStore();
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isAddToPlaylistModelOpen, setIsAddToPlaylistModelOpen] = useState(false);
 
   const difficulties = ["easy", "medium", "hard"];
 
-    const handleDelete = (problemId) => {
-        onDeleteProblem(problemId)
-    };
+  const handleDelete = (problemId) => {
+    onDeleteProblem(problemId);
+  };
 
-  const handleAddToPlaylist = (problemId) => {};
+    const handleAddToPlaylist = (problemId) => { };
+
+    const handleCreatePlayist = async(data) => {
+        await createPlaylist(data)
+    }
 
   const filteredProblem = useMemo(() => {
     return (problems || [])
@@ -221,7 +229,13 @@ const ProblemTable = ({ problems }) => {
         >
           next
         </button>
-      </div>
+          </div>
+
+      <CreatePlaylistModel
+              isOpen={ isCreateModalOpen }
+          onClose={ () => setIsCreateModalOpen(false) }
+          onSubmit={handleCreatePlayist}
+      />
     </div>
   );
 };
